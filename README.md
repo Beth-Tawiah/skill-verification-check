@@ -1,7 +1,7 @@
-# to-do-list
+# skill-verifcation-check
 This next project idea is to build a skill verification system. 
 On  platforms, people make  claims  about  how skillfull they are. which sometimes may be true or not. 
-This skill verification system would validate skills in a simple and objective way including decentralized consensus. 
+This skill verification system would validate skills in a simple and objective way. 
 Examples of skills would be judged anonymously by random  users. 
 Users will verify and validate the claim and get rewarded for their work. 
 
