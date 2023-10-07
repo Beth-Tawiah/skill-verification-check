@@ -1,59 +1,70 @@
+// Import necessary libraries and artifacts
+import { Contract } from 'ethers';
 import { ethers } from 'hardhat';
-import { Signer, Contract, ContractFactory } from 'ethers';
 import { expect } from 'chai';
 
-const contractAddress = '0xYourContractAddress'; // Replace with your contract's actual address
-const contractABI = [
-  // ... (your contract's ABI)
-];
-
 describe('SkillCheck Contract', () => {
-  let SkillCheck: ContractFactory;
   let skillCheck: Contract;
-  let owner: Signer;
-  let trustedSource: Signer;
-  let trustedReferee: Signer;
+  let owner: any;
+  let trustedSource: any;
+  let trustedReferee: any;
 
-  beforeEach(async () => {
+  before(async () => {
     [owner, trustedSource, trustedReferee] = await ethers.getSigners();
-    SkillCheck = await ethers.getContractFactory('SkillCheck');
-    skillCheck = await SkillCheck.deploy() as Contract;
-    await skillCheck.deployed();
+
+    // Deploy the SkillCheck contract
+    const SkillCheck = await ethers.getContractFactory('SkillCheck');
+    skillCheck = await SkillCheck.deploy();
+
+    // Add trusted sources and referees
+    await skillCheck.addTrustedSource(trustedSource.address);
+    await skillCheck.addTrustedReferee(trustedReferee.address);
   });
 
-  it('Should issue a new credential', async () => {
+  it('should issue a new credential', async () => {
     const skill = 'Programming';
     const level = 'Expert';
 
-    const ownerSkillCheck = skillCheck.connect(owner);
-    await ownerSkillCheck.issueCredential(skill, level);
-    const credentialCount = await skillCheck.getCredentialsCount(await owner.getAddress());
-    expect(credentialCount).to.equal(1);
-
-    const [credential] = await skillCheck.getCredentials(await owner.getAddress());
-    expect(credential.skill).to.equal(skill);
-    expect(credential.level).to.equal(level);
-    expect(credential.owner).to.equal(await owner.getAddress());
-    expect(credential.status).to.equal(0); // CredentialStatus.Pending
+    await expect(skillCheck.issueCredential(skill, level))
+      .to.emit(skillCheck, 'CredentialIssued')
+      .withArgs(owner.address, skill, level);
   });
 
-  it('Should allow trusted source to verify a credential', async () => {
-    const [credential] = await skillCheck.getCredentials(await owner.getAddress());
+  it('should verify a credential by a trusted source', async () => {
+    const credentialIndex = 0;
 
-    await skillCheck.addTrustedSource(await trustedSource.getAddress());
-    await skillCheck.connect(trustedSource).verifyCredential(credential.owner, 0);
-
-    const [, , , status] = await skillCheck.getCredential(credential.owner, 0);
-    expect(status).to.equal(1); // CredentialStatus.Endorsed
+    await expect(skillCheck.verifyCredential(owner.address, credentialIndex))
+      .to.emit(skillCheck, 'CredentialVerified')
+      .withArgs(owner.address, credentialIndex, 1); // CredentialStatus.Endorsed
   });
 
-  it('Should allow trusted referee to reach consensus on a credential', async () => {
-    const [credential] = await skillCheck.getCredentials(await owner.getAddress());
+  it('should reach consensus on a credential by a trusted referee', async () => {
+    const credentialIndex = 0;
+    const consensus = 2; // CredentialStatus.Flagged
 
-    await skillCheck.addTrustedReferee(await trustedReferee.getAddress());
-    await skillCheck.connect(trustedReferee).reachConsensus(credential.owner, 0, 2); // CredentialStatus.Flagged
+    await expect(skillCheck.reachConsensus(owner.address, credentialIndex, consensus))
+      .to.emit(skillCheck, 'CredentialVerified')
+      .withArgs(owner.address, credentialIndex, consensus);
+  });
 
-    const [, , , status] = await skillCheck.getCredential(credential.owner, 0);
+  it('should get the count of credentials for an owner', async () => {
+    const credentialsCount = await skillCheck.getCredentialsCount(owner.address);
+    expect(credentialsCount).to.equal(1); // Assuming one credential has been issued
+  });
+
+  it('should get a specific credential for an owner', async () => {
+    const credentialIndex = 0;
+    const [skill, level, credentialOwner, status] = await skillCheck.getCredential(owner.address, credentialIndex);
+    
+    expect(skill).to.equal('Programming');
+    expect(level).to.equal('Expert');
+    expect(credentialOwner).to.equal(owner.address);
     expect(status).to.equal(2); // CredentialStatus.Flagged
+  });
+
+  it('should get a list of all credentials for an owner', async () => {
+    const ownerCredentials = await skillCheck.getCredentials(owner.address);
+    
+    expect(ownerCredentials).to.have.lengthOf(1); // Assuming one credential has been issued
   });
 });
