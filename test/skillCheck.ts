@@ -14,7 +14,7 @@ describe('SkillCheck Contract', () => {
 
     // Deploy the SkillCheck contract
     const SkillCheck = await ethers.getContractFactory('SkillCheck');
-    skillCheck = await SkillCheck.deploy();
+    skillCheck= await SkillCheck.deploy();
 
     // Add trusted sources and referees
     await skillCheck.addTrustedSource(trustedSource.address);
@@ -49,7 +49,7 @@ describe('SkillCheck Contract', () => {
 
   it('should get the count of credentials for an owner', async () => {
     const credentialsCount = await skillCheck.getCredentialsCount(owner.address);
-    expect(credentialsCount).to.equal(1); // Assuming one credential has been issued
+    expect(credentialsCount).to.equal(1); // if one credential is issued 
   });
 
   it('should get a specific credential for an owner', async () => {
@@ -65,6 +65,6 @@ describe('SkillCheck Contract', () => {
   it('should get a list of all credentials for an owner', async () => {
     const ownerCredentials = await skillCheck.getCredentials(owner.address);
     
-    expect(ownerCredentials).to.have.lengthOf(1); // Assuming one credential has been issued
+    expect(ownerCredentials).to.have.lengthOf(1); // if one credential is issued 
   });
 });
