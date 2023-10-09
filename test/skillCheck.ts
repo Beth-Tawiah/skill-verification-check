@@ -1,7 +1,8 @@
-// Import necessary libraries and artifacts
-import { Contract } from 'ethers';
-import { ethers } from 'hardhat';
 import { expect } from 'chai';
+import { Contract,ContractFactory } from 'ethers';
+import { ethers } from 'hardhat';
+
+
 
 describe('SkillCheck Contract', () => {
   let skillCheck: Contract;
@@ -9,12 +10,13 @@ describe('SkillCheck Contract', () => {
   let trustedSource: any;
   let trustedReferee: any;
 
+
   before(async () => {
     [owner, trustedSource, trustedReferee] = await ethers.getSigners();
 
     // Deploy the SkillCheck contract
-    const SkillCheck = await ethers.getContractFactory('SkillCheck');
-    skillCheck= await SkillCheck.deploy();
+    const SkillCheckFactory: ContractFactory = await ethers.getContractFactory('SkillCheck');
+  skillCheck = await SkillCheckFactory.deploy() as Contract;
 
     // Add trusted sources and referees
     await skillCheck.addTrustedSource(trustedSource.address);
@@ -31,6 +33,8 @@ describe('SkillCheck Contract', () => {
   });
 
   it('should verify a credential by a trusted source', async () => {
+    await skillCheck.addTrustedSource(owner.address);
+
     const credentialIndex = 0;
 
     await expect(skillCheck.verifyCredential(owner.address, credentialIndex))
@@ -39,6 +43,7 @@ describe('SkillCheck Contract', () => {
   });
 
   it('should reach consensus on a credential by a trusted referee', async () => {
+    await skillCheck.addTrustedReferee(owner.address);
     const credentialIndex = 0;
     const consensus = 2; // CredentialStatus.Flagged
 
