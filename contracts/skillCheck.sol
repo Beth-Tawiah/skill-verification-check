@@ -16,6 +16,8 @@ contract SkillCheck {
         CredentialStatus status;
     }
 
+    
+
     // Store credentials according to owner's address
     mapping(address => Credential[]) public credentials;
     mapping(address => bool) public trustedSources;
