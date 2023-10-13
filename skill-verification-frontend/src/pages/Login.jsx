@@ -3,7 +3,7 @@ import { useMetaMask } from "metamask-react";
 import './Login.css';
 
 function Login() {
-    const { connect } = useMetaMask();
+    const { connect,status } = useMetaMask();
 
     const handleLogin = () => {
         connect();

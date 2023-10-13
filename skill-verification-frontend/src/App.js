@@ -1,21 +1,38 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-// import UserDashboard from './pages/UserDashboard';
-// import VerificationPage from './components/VerificationPage';
-// import EmployersPage from './components/EmployersPage';
+import UserDashboard from './pages/UserDashboard';
+import VerificationPage from './pages/VerificationPage';
+import { useMetaMask } from "metamask-react";
 
 function App() {
+  const { status, connect, account, chainId, ethereum } = useMetaMask();
+
   return (
-    <div className="App">
-      <Router>
-          <Route path="/login" pages={Login} />
-          {/* <Route path="/dashboard" pages={UserDashboard} /> */}
-          {/* <Route path="/verification" component={VerificationPage} /> */}
-          {/* <Route path="/employers" component={EmployersPage} /> */}
-          {/* You can add more routes for other pages if needed */}
-      </Router>
-    </div>
+    <BrowserRouter>
+      {status === "initializing" && <div>Synchronisation with MetaMask ongoing...</div>}
+
+      {status === "unavailable" && <div>MetaMask not available.</div>}
+
+      {status === "notConnected" && (
+        <div>
+          <button onClick={connect}>Connect to MetaMask</button>
+        </div>
+      )}
+
+      {status === "connecting" && <div>Connecting...</div>}
+
+      {status === "connected" && (
+        <div>
+          Connected account  on chain ID {chainId}
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/UserDashboard" element={<UserDashboard />} />
+            <Route path="/VerificationPage" element={<VerificationPage />} />
+          </Routes>
+        </div>
+      )}
+    </BrowserRouter>
   );
 }
 
