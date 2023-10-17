@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import UserDashboard from './pages/UserDashboard';
 import VerificationPage from './pages/VerificationPage';
 import { useMetaMask } from "metamask-react";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask();
@@ -29,9 +31,12 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/UserDashboard" element={<UserDashboard />} />
             <Route path="/VerificationPage" element={<VerificationPage />} />
+                        <Route path="/VerificationPage" element={<VerificationPage />} />
+
           </Routes>
         </div>
       )}
+      
     </BrowserRouter>
   );
 }
