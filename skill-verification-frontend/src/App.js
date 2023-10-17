@@ -31,7 +31,6 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/UserDashboard" element={<UserDashboard />} />
             <Route path="/VerificationPage" element={<VerificationPage />} />
-                        <Route path="/VerificationPage" element={<VerificationPage />} />
 
           </Routes>
         </div>

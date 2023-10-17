@@ -1,4 +1,6 @@
-[
+{
+  "abi": 
+  [
     {
       "anonymous": false,
       "inputs": [
@@ -311,3 +313,4 @@
       "type": "function"
     }
   ]
+}

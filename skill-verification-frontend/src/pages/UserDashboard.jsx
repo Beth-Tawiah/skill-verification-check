@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './UserDashboard.css';
-import { issueCredential } from './SkillCheck';
+import { issueCredential } from './blockchain.js';
 
 function UserDashboard() {
   const [skills, setSkills] = useState('');
   const [certificates, setCertificates] = useState('');
   const [education, setEducation] = useState('');
   const [training, setTraining] = useState('');
-  const [showNotification, setShowNotification] = useState(false); // Add state to control the notification
+  const [showNotification, setShowNotification] = useState(true);
 
   const handleSkillsChange = (e) => {
     setSkills(e.target.value);
@@ -32,22 +32,20 @@ function UserDashboard() {
     setShowNotification(true);
 
     // Simulate a delay to show the notification
-    setTimeout(() => {
-      // You can send the data to your smart contract or API here
-      console.log('Skills:', skills);
-      console.log('Certificates:', certificates);
-      console.log('Education:', education);
-      console.log('Training:', training);
+    setTimeout(async () => {
+      // Call the smart contract function to issue a credential
+      await issueCredential(skills, certificates);
+
       // Reset the form fields
       setSkills('');
       setCertificates('');
       setEducation('');
       setTraining('');
+
       // Hide the notification after the verification is complete
       setShowNotification(false);
     }, 2000); // Simulating a 2-second delay for verification
   };
-
   return (
     <div className="user-dashboard-container">
       <h2 className="user-dashboard-title">User Dashboard</h2>
@@ -94,16 +92,16 @@ function UserDashboard() {
             onChange={handleTrainingChange}
             placeholder="Add completed training"
           />
+<button type="submit" className="submit-button">
+  Submit
+  
+</button>
+
+{showNotification && (
+  <div className="notification-popup">Skills verification in progress</div>
+)}
+
         </div>
-
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-
-        {/* Conditionally render the notification based on the 'showNotification' state */}
-        {showNotification && (
-          <div className="notification-popup">Skills verification in progress</div>
-        )}
       </form>
     </div>
   );
