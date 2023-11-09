@@ -3,7 +3,7 @@
 import { skillCheckSol } from "../typechain-types";
 
 async function main() {
-    const skillCheck = await ethers.deployContract("skillCheck");
+    const skillCheck = await ethers.deployContract("SkillCheck");
 
     await skillCheck.waitForDeployment();
 

@@ -7,18 +7,32 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
+  // solidity: "0.8.19",
   networks: {
-    mumbai: {
-      url: "https://rpc-mumbai.matic.today",
-      accounts: [process.env.PRIVATE_KEY_MUMBAI as string],
+    hardhat: {
+      chainId: 31337,
+      },
+      mumbai: {
+      url: "https://polygon-mumbai.g.alchemy.com/v2/t2kNu0Pju1xnyvgTDvZN3_cbitoqzVJi",
+      accounts: ["0bbb459f78d65b9fc08dfe330214ebc6087c884b0a7148a9be83f015404005bb"],
+
     },
-    mainnet: {
-      url: "https://rpc-mainnet.maticvigil.com",
-      accounts: [process.env.PRIVATE_KEY_MAINNET as string],
     },
-  },
-};
+
+    solidity: {
+      version: "0.8.19", // Match this with your contract's pragma version.
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200,
+        },
+      },
+    },
+
+  };
+  
+
+
 
 
 
