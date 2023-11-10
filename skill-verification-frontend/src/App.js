@@ -20,6 +20,7 @@ function App() {
         <div>
           <button onClick={connect}>Connect to MetaMask</button>
         </div>
+       
       )}
 
       {status === "connecting" && <div>Connecting...</div>}
@@ -35,6 +36,7 @@ function App() {
           </Routes>
         </div>
       )}
+
       
     </BrowserRouter>
   );
